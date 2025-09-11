@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | StudentConnect</title>
+    <link rel="stylesheet" href="{% static 'css/student.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/2a975638e3.js" crossorigin="anonymous"></script>
+</head>
+<body data-theme="dark">
+
+    <div id="dashboard-page" class="dashboard-page">
+        <aside class="sidebar">
+            <div class="logo">Student<strong>Connect</strong></div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active" data-page="discover"><a href="#" title="Discover"><i class="fas fa-compass"></i><span>Discover</span></a></li>
+                    <li data-page="my-events"><a href="#" title="My Events"><i class="fas fa-calendar-check"></i><span>My Events</span></a></li>
+                    <li data-page="profile"><a href="#" title="Profile"><i class="fas fa-user"></i><span>Profile</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="theme-toggle" title="Toggle Theme"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+                <a href="{% url 'logout' %}" id="logoutBtn" class="cta-button">Logout</a>
+                {% comment %} <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="cta-button">Logout</button>
+                </form> {% endcomment %}
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-left">
+                    <h2 id="greeting">Welcome,{{ user.first_name }}</h2>
+                    <p>Let's find your next big opportunity.</p>
+                </div>
+                <div class="header-right">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="search" id="search-bar" placeholder="Search events, workshops...">
+                    </div>
+                </div>
+            </header>
+            
+            <section id="discover-page" class="page-content">
+                <div class="filters">
+                    <h3>All Opportunities</h3>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-category="all">All</button>
+                        <button class="filter-btn" data-category="hackathon">Hackathons</button>
+                        <button class="filter-btn" data-category="workshop">Workshops</button>
+                        <button class="filter-btn" data-category="techevent">Tech Events</button>
+                        <button class="filter-btn" data-category="internship">Internships</button>
+                    </div>
+                </div>
+                <div id="event-grid" class="event-grid">
+                    <div class="event-card skeleton"></div>
+                    <div class="event-card skeleton"></div>
+                    <div class="event-card skeleton"></div>
+                    <div class="event-card skeleton"></div>
+                </div>
+            </section>
+
+            <section id="my-events-page" class="page-content hidden">
+                <h3>My Registered Events</h3>
+                <div class="my-events-container">
+                    <p>You haven't registered for any events yet. Bookmarked events will also appear here!</p>
+                </div>
+            </section>
+
+            <section id="profile-page" class="page-content hidden">
+                <h3>My Profile</h3>
+                <div class="profile-container">
+                    <div class="profile-content-wrapper">
+                        <div class="profile-avatar-section">
+                            <img src="{% if profile.avatar %}{{ profile.avatar.url }}{% else %}https://i.ibb.co/615b2D4/default-avatar.png{% endif %}" 
+                                alt="Profile Picture" 
+                                id="profile-picture-preview" 
+                                class="profile-avatar-large">
+                            <label for="profile-upload-input" class="upload-btn">
+                                <i class="fas fa-camera"></i> Upload Photo
+                            </label>
+                        </div>
+
+                        <div class="profile-details-section">
+                            <form method="POST" action="{% url 'save_profile' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="info-field">
+                                <label for="profile-name-input">Full Name</label>
+                                <input type="text" id="profile-name-input" value="{{ user.first_name }}" readonly>
+                            </div>
+                            <div class="info-field">
+                                <label for="profile-email-input">Email Address</label>
+                                <input type="email" id="profile-email-input" value="{{ user.email }}" readonly>
+                            </div>
+                            <div class="info-field">
+                                <label for="profile-mobile-input">Mobile Number</label>
+                                <input type="tel" id="profile-mobile-input" name="contact_number"
+                                    value="{{ profile.contact_number|default:'' }}">
+                            </div>
+                            <input type="file" id="profile-upload-input" name="avatar" accept="image/*" class="hidden">
+                            <button type="submit" class="cta-button primary">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="event-details-page" class="page-content hidden">
+                <div class="details-header">
+                     <button class="back-link" id="back-to-discover"><i class="fas fa-arrow-left"></i> Back to Discover</button>
+                </div>
+                <div class="details-container">
+                    <div class="details-left">
+                        <h1 id="details-title"></h1>
+                        <img src="" alt="Event Image" class="details-image" id="details-image">
+                        <h2>About this Event</h2>
+                        <p id="details-description"></p>
+                        <h3>Key Topics Covered</h3>
+                        <ul class="topics-list" id="details-topics"></ul>
+                    </div>
+                    <div class="details-right">
+                        <div class="info-card">
+                            <h3>Event Details</h3>
+                            <p><i class="fas fa-calendar-alt"></i> <strong id="details-date"></strong></p>
+                            <p><i class="fas fa-clock"></i> <strong id="details-time"></strong></p>
+                            <p><i class="fas fa-map-marker-alt"></i> <strong id="details-mode"></strong></p>
+                            <p><i class="fas fa-rupee-sign"></i> <strong>Price:</strong> <span id="details-price"></span></p>
+                            <button class="cta-button primary full-width register-btn">Register Now</button>
+                        </div>
+                         <div class="info-card speaker-card">
+                            <h3>About the Speaker</h3>
+                            <div class="speaker-info">
+                                <img src="" alt="Speaker" class="speaker-avatar" id="details-speaker-avatar">
+                                <div>
+                                    <h4 id="details-speaker-name"></h4>
+                                    <p id="details-speaker-role"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="{% static 'js/student.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Organizer Portal</title>
+    <link rel="stylesheet" href="{% static 'css/organizer.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/2a975638e3.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div id="dashboard-page">
+        <aside class="sidebar">
+            <div class="logo">S<strong>C</strong> | Org</div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active" data-view="dashboard-overview"><a href="#" title="Dashboard"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+                    <li data-view="create-event-view"><a href="#" title="Create Event"><i class="fas fa-plus-circle"></i><span>Create Event</span></a></li>
+                    <li data-view="manage-events-view"><a href="#" title="Manage Events"><i class="fas fa-list-alt"></i><span>Manage Events</span></a></li>
+                    <li data-view="profile-page"><a href="#" title="Profile"><i class="fas fa-user"></i><span>Profile</span></a></li>
+                    {% comment %} <li data-view="organizer-profile-view"><a href="#" title="Profile"><i class="fas fa-user-circle"></i><span>Profile</span></a></li> {% endcomment %}
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" id="logoutBtn" title="Logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="dashboard-content">
+            <section id="dashboard-overview" class="dashboard-view">
+                <header class="view-header">
+                    <h2>Dashboard Overview</h2>
+                    <p>Welcome, TechEvents Inc!</p>
+                </header>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h4>Total Event</h4>
+                        <p id="total-events-count">0</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h4>Total Registrations</h4>
+                        <p id="total-registrations-count">873</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h4>Pending</h4>
+                        <p id="pending-events-count">0</p>
+                    </div>
+                    <div class="analytics-card">
+                        <h4>Approved</h4>
+                        <p id="approved-events-count">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="create-event-view" class="dashboard-view hidden">
+                 <header class="view-header">
+                    <h2>Create a New Event</h2>
+                    <p>Fill out the details to get your event listed on the platform.</p>
+                </header>
+                <form id="event-form" class="event-form-container">
+                    <div class="form-step active">
+                        <h3>Step 1: Basic Information</h3>
+                        <div class="form-group">
+                            <label for="event-title">Event Title</label>
+                            <input type="text" id="event-title" placeholder="e.g., Annual Tech Hackathon" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-category">Category</label>
+                            <select id="event-category">
+                                <option value="hackathon">Hackathon</option>
+                                <option value="workshop">Workshop</option>
+                                <option value="internship">Internship</option>
+                                <option value="techevent">TechEvent</option> 
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-date">Event Date</label>
+                            <input type="date" id="event-date" required>
+                        </div>
+                    </div>
+                    <div class="form-step">
+                         <h3>Step 2: Details & Flyer</h3>
+                         <div class="form-group">
+                            <label for="event-description">Description</label>
+                            <textarea id="event-description" rows="5" placeholder="Describe your event..."></textarea>
+                         </div>
+                         <div class="form-group">
+                             <label for="event-flyer">Event Flyer</label>
+                             <div id="drag-drop-area" class="drag-drop-area">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p><strong>Drag & Drop</strong> an image here or click to upload</p>
+                                <input type="file" id="event-flyer" accept="image/*" hidden>
+                             </div>
+                             <img id="image-preview" class="image-preview hidden" src="#" alt="Image Preview"/>
+                         </div>
+                         <div class="form-group">
+                            <label for="event-registration-link">Registration Link</label>
+                            <input type="url" id="event-registration-link" placeholder="https://example.com/register" required>
+                         </div>
+                    </div>
+                    <div class="form-navigation">
+                        <button type="button" id="prevBtn" class="cta-button secondary hidden">Previous</button>
+                        <button type="button" id="nextBtn" class="cta-button primary">Next</button>
+                        <button type="submit" id="submitBtn" class="cta-button primary hidden">Submit for Review</button>
+                    </div>
+                </form>
+            </section>
+            
+            <section id="manage-events-view" class="dashboard-view hidden">
+                <header class="view-header">
+                    <h2>Manage Your Events</h2>
+                    <p>Here is a list of all your past and current event submissions.</p>
+                </header>
+                <div class="search-container">
+                    <input type="text" id="event-search-input" placeholder="Search events by title...">
+                </div>
+                <div class="event-table-container">
+                    <table class="event-table">
+                        <thead>
+                            <tr>
+                                <th>Event Title</th>
+                                <th>Category</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="event-list-body">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="profile-page" class="dashboard-view hidden">
+                <h3>My Profile</h3>
+                <div class="profile-container">
+                    <div class="profile-content-wrapper">
+                        <div class="profile-avatar-section">
+                            <img src="{% if profile.avatar %}{{ profile.avatar.url }}{% else %}https://i.ibb.co/615b2D4/default-avatar.png{% endif %}" 
+                                alt="Profile Picture"
+                                id="profile-picture-preview"
+                                class="profile-avatar-large">
+                            <label for="profile-upload-input" class="upload-btn">
+                                <i class="fas fa-camera"></i> Upload Photo
+                            </label>
+                            <input type="file" id="profile-upload-input" class="hidden" accept="image/*">
+                        </div>
+                        <div class="profile-details-section">
+                            <div class="info-field">
+                                <label>Full Name</label>
+                                <input type="text" value="{{ user.first_name }}" readonly>
+                            </div>
+                            <div class="info-field">
+                                <label>Email Address</label>
+                                <input type="email" value="{{ user.email }}" readonly>
+                            </div>
+                            <div class="info-field">
+                                <label>Role</label>
+                                <input type="text" value="{{ profile.user_type }}" readonly>
+                            </div>
+                            <div class="info-field">
+                                <label for="profile-mobile-input">Mobile Number</label>
+                                <input type="tel" id="profile-mobile-input" 
+                                    value="{{ profile.contact_number|default:'' }}" 
+                                    placeholder="+91 98765 43210">
+                            </div>
+                            <button class="cta-button primary" id="save-profile-btn">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+    <script src="{% static 'js/organizer.js' %}"></script>
+</body>
+</html>

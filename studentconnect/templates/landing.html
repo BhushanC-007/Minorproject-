@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudentConnect | Unlock Your Future</title>
+  <link rel="stylesheet" href="{% static 'css/student.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/2a975638e3.js" crossorigin="anonymous"></script>
+</head>
+<body data-theme="light">
+
+  <div id="welcome-page">
+    <header class="main-header">
+      <div class="container">
+        <nav>
+          <div class="logo">Student<strong>Connect</strong></div>
+          <!-- Button to open modal -->
+          <button id="joinBtn" class="cta-button primary">Login / Sign Up</button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero student-hero">
+        <div class="container">
+          <div class="hero-content">
+            <h1>Connect to Your Future Career.</h1>
+            <p>The ultimate platform for students to discover exclusive internships, workshops, and hackathons. Build your skills, showcase your talent, and get noticed by top companies.</p>
+            <button id="cta-join-btn" class="cta-button-large">Join Our Growing Community</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="features-section">
+        <div class="container">
+          <h2>Why Join StudentConnect?</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <i class="fas fa-compass"></i>
+              <h3>Discover Opportunities</h3>
+              <p>Access a curated list of top-tier hackathons, internships, and skill-building workshops from leading companies and organizations.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-id-card"></i>
+              <h3>Showcase Your Skills</h3>
+              <p>Create a professional profile that highlights your projects, skills, and educational background to stand out to recruiters.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fas fa-users"></i>
+              <h3>Connect & Grow</h3>
+              <p>Join a vibrant community of fellow students and mentors. Network, collaborate on projects, and accelerate your career growth.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="main-footer-bottom">
+      <p>&copy; 2025 StudentConnect. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <!-- ================= AUTH MODAL ================= -->
+  <div id="auth-page" class="modal-overlay">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+
+      <!-- Toggle buttons -->
+      <div class="form-toggle">
+        <button id="student-toggle" class="toggle-btn active">Student</button>
+        <button id="organizer-toggle" class="toggle-btn">Organizer</button>
+      </div>
+
+      <!-- ================= STUDENT FORMS ================= -->
+      <div id="student-forms" class="form-container">
+
+        <!-- Student Login -->
+        <form id="student-login-form" method="POST" action="{% url 'login' %}">
+          {% csrf_token %}
+          <h2>Student Login</h2>
+          <input type="email" id="student-login-email" name="email" placeholder="Email Address" required>
+          <div class="password-wrapper">
+            <input type="password" id="student-login-password" name="password" placeholder="Password" required>
+            <i class="fas fa-eye toggle-password"></i>
+          </div>
+          <input type="hidden" name="user_type" value="student">
+          <button type="submit" class="cta-button primary full-width">Login to Dashboard</button>
+          <p>New here? <a href="#" id="show-signup">Create an Account</a></p>
+        </form>
+
+        <!-- Student Signup -->
+        <form id="signup-form" class="hidden" method="POST" action="{% url 'signup' %}">
+          {% csrf_token %}
+          <h2> Create Student Account</h2>
+          <input type="text" id="student-signup-name" name="name" placeholder="Full Name" required>
+          <input type="email" id="student-signup-email" name="email" placeholder="Email Address" required>
+          <div class="password-wrapper">
+            <input type="password" id="student-signup-password" name="password" placeholder="Create Password" required>
+            <i class="fas fa-eye toggle-password"></i>
+          </div>
+          <div class="password-wrapper">
+            <input type="password" id="student-signup-confirm-password" name="confirm_password" placeholder="Confirm Password" required>
+            <i class="fas fa-eye toggle-password"></i>
+          </div>
+          <input type="hidden" name="user_type" value="student">
+          <button type="submit" class="cta-button primary full-width">Create Account</button>
+          <p>Already a member? <a href="#" id="show-login">Log In</a></p>
+        </form>
+      </div>
+
+      <!-- ================= ORGANIZER FORMS ================= -->
+      <div id="organizer-forms" class="form-container hidden">
+
+        <!-- Organizer Login -->
+        <form id="organizer-login-form" method="POST" action="{% url 'login' %}">
+          {% csrf_token %}
+          <h2>Organizer Login</h2>
+          <input type="email" id="organizer-login-email" name="email" placeholder="Organizer Email Address" required>
+          <div class="password-wrapper">
+            <input type="password" id="organizer-login-password" name="password" placeholder="Password" required>
+            <i class="fas fa-eye toggle-password"></i>
+          </div>
+          <input type="hidden" name="user_type" value="organizer">
+          <button type="submit" class="cta-button primary full-width">Login to Organizer Portal</button>
+          <p>New here? <a href="#" id="show-organizer-signup">Create an Organizer Account</a></p>
+        </form>
+
+        <!-- Organizer Signup -->
+        <form id="organizer-signup-form" class="hidden" method="POST" action="{% url 'signup' %}">
+          {% csrf_token %}
+          <h2>Create Organizer Account</h2>
+          <input type="text" id="organizer-signup-name" name="name" placeholder="Organization Name" required>
+          <input type="email" id="organizer-signup-email" name="email" placeholder="Official Email Address" required>
+          <div class="password-wrapper">
+            <input type="password" id="organizer-signup-password" name="password" placeholder="Create Password" required>
+            <i class="fas fa-eye toggle-password"></i>
+          </div>
+          <input type="hidden" name="user_type" value="organizer">
+          <button type="submit" class="cta-button primary full-width">Create Account</button>
+          <p>Already an organizer? <a href="#" id="show-organizer-login">Log In</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/student.js' %}"></script>
+</body>
+</html>
